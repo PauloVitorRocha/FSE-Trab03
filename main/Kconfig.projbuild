@@ -28,7 +28,7 @@ menu "Configuração API KEYS Configuration"
             É a chave de acesso da api do IP STACK, acesse ela pelo link https://ipstack.com/quickstart
 
     config OPEN_WEATHER_MAP_ACCESS_KEY
-        string "chave de acessp da api openweathermap"
+        string "chave de acesso da api openweathermap"
         default "minha_chave"
         help
             É a chave de acesso da api do openweathermap, acesse ela pelo link https://home.openweathermap.org/api_keys
