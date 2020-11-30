@@ -148,7 +148,7 @@ CONFIG_ESP_MAXIMUM_RETRY=5
 #
 # Configuração API KEYS Configuration
 #
-CONFIG_IP_STACK_ACCESS_KEY="minha_chave"
+CONFIG_IP_STACK_ACCESS_KEY="20799b630b9aa9cb0093aef6e3b25c77"
 CONFIG_OPEN_WEATHER_MAP_ACCESS_KEY="minha_chave"
 # end of Configuração API KEYS Configuration
 

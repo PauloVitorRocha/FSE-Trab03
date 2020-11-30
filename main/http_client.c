@@ -27,9 +27,10 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
             break;
         case HTTP_EVENT_ON_DATA:
             ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
-
+            //printf("%.*s", evt->data_len, (char *)evt->data);
+            
             memmove(buffer + tamanhoBuffer, evt->data, evt->data_len);
-            printf("aaaaaa %s\n", buffer);
+            //printf("aaaaaa %s\n", buffer);
             tamanhoBuffer += evt->data_len;
             break;
         case HTTP_EVENT_ON_FINISH:
