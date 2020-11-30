@@ -4,7 +4,7 @@
 #define IP_STACK_KEY CONFIG_IP_STACK_ACCESS_KEY
 #define OPEN_WEATHER_MAP_KEY CONFIG_OPEN_WEATHER_MAP_ACCESS_KEY
 
-extern xSemaphoreHandle conexaoWifiSemaphoreHTTP;
+extern xSemaphoreHandle conexaoWifiSemaphoreHTTP, desconexaoWifiSemaphoreHTTP;
 
 char *buffer;
 
@@ -77,24 +77,33 @@ void parserJsonTempo()
 void RealizaHTTPRequest(void *params)
 {
     
-   
+    int conexao=0;
     while (true)
     {
-        if (xSemaphoreTake(conexaoWifiSemaphoreHTTP, portMAX_DELAY))
+        if (xSemaphoreTake(conexaoWifiSemaphoreHTTP, portMAX_DELAY)){
+            conexao=1;
+        }
+        while (conexao == 1)
         {
+            piscaLed();
             alocaMemoriaBuffer();
             char url[300];
-            sprintf(url, "http://api.ipstack.com/check?access_key=%s&fields=latitude,longitude",IP_STACK_KEY);
+            sprintf(url, "http://api.ipstack.com/check?access_key=%s&fields=latitude,longitude", IP_STACK_KEY);
             http_request(url);
             parserJsonLatitudeLongitude();
 
             alocaMemoriaBuffer();
             if (latitude > -500 && longitude > -500)
             {
+                piscaLed();
                 sprintf(url, "http://api.openweathermap.org/data/2.5/weather?lat=%lf&lon=%lf&appid=%s&units=metric", latitude, longitude, OPEN_WEATHER_MAP_KEY);
                 http_request(url);
                 parserJsonTempo();
                 imprimeVariaveisTempo();
+            }
+            if (xSemaphoreTake(desconexaoWifiSemaphoreHTTP, 60 * 5 * 1000 / portTICK_PERIOD_MS))
+            {
+                conexao = 0;
             }
         }
     }

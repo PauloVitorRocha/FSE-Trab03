@@ -8,8 +8,7 @@
 #include "realizaHTTPRequest.h"
 #include "led.h"
 
-xSemaphoreHandle conexaoWifiSemaphoreHTTP, conexaoWifiSemaphoreLED,desconexaoWifi;
-
+xSemaphoreHandle conexaoWifiSemaphoreHTTP, conexaoWifiSemaphoreLED, desconexaoWifi, desconexaoWifiSemaphoreHTTP;
 
 void app_main(void)
 {
@@ -26,8 +25,9 @@ void app_main(void)
     conexaoWifiSemaphoreHTTP = xSemaphoreCreateBinary();
     conexaoWifiSemaphoreLED = xSemaphoreCreateBinary();
     desconexaoWifi = xSemaphoreCreateBinary();
-    xTaskCreate(&RealizaHTTPRequest,  "Processa HTTP", 4096*2, NULL, 2, NULL);
-    xTaskCreate(&piscaLed, "PiscaLed ", 4096, NULL, 2, NULL);
+    desconexaoWifiSemaphoreHTTP = xSemaphoreCreateBinary();
+    xTaskCreate(&RealizaHTTPRequest, "Processa HTTP", 4096 * 2, NULL, 2, NULL);
+    xTaskCreate(&Led, "Led ", 4096, NULL, 2, NULL);
     wifi_start();
 
 }

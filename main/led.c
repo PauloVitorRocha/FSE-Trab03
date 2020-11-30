@@ -11,7 +11,7 @@ void inicializaLed(){
 }
 
 
-void piscaLed(void *params)
+void Led(void *params)
 {
     int estado = 0;
     int ledContinuaPiscando = 1;
@@ -21,12 +21,10 @@ void piscaLed(void *params)
         if (xSemaphoreTake(conexaoWifiSemaphoreLED, 500 / portTICK_PERIOD_MS))
         {
             gpio_set_level(LED, 1);
-            ESP_LOGI("Task 2", "Escreve no display:");
             ledContinuaPiscando = 0;
         }
         else if (xSemaphoreTake(desconexaoWifi, 500 / portTICK_PERIOD_MS))
         {
-            ESP_LOGI("Task 2.1", "desconectado o wifi");
             ledContinuaPiscando = 1;
         }
         else if (ledContinuaPiscando)
@@ -36,4 +34,10 @@ void piscaLed(void *params)
             estado = !estado;
         }
     }
+}
+
+void piscaLed(){
+    gpio_set_level(LED, 0);
+    vTaskDelay(500/portTICK_PERIOD_MS);
+    gpio_set_level(LED, 1);
 }

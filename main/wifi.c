@@ -25,7 +25,7 @@
 static EventGroupHandle_t s_wifi_event_group;
 
 static int s_retry_num = 0;
-extern xSemaphoreHandle conexaoWifiSemaphoreHTTP, conexaoWifiSemaphoreLED, desconexaoWifi;
+extern xSemaphoreHandle conexaoWifiSemaphoreHTTP, conexaoWifiSemaphoreLED, desconexaoWifi, desconexaoWifiSemaphoreHTTP;
 
 static void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
@@ -35,6 +35,8 @@ static void event_handler(void* arg, esp_event_base_t event_base,
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
         ESP_LOGI(TAG, "disconnect");
         xSemaphoreGive(desconexaoWifi);
+        xSemaphoreGive(desconexaoWifiSemaphoreHTTP);
+        vTaskDelay(5 * 1000 / portTICK_PERIOD_MS);
         if (s_retry_num < WIFI_MAXIMUM_RETRY) {
             esp_wifi_connect();
             s_retry_num++;
@@ -59,46 +61,13 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 void disconnectManual(void *params){
 
     while(true){
-        vTaskDelay(10000/ portTICK_PERIOD_MS);
+        vTaskDelay(20*1000/ portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "entrei no disconect2");
         esp_wifi_disconnect();
     }
 
 }
 
-/*void eventoGrupo(void *params)
-{
-
-    while (true)
-    {
-         Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
-     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) 
-        EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-                                               WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-                                               pdFALSE,
-                                               pdFALSE,
-                                               portMAX_DELAY);
-
-         xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
-     * happened. 
-        if (bits & WIFI_CONNECTED_BIT)
-        {
-            ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
-                     WIFI_SSID, WIFI_PASS);
-        }
-        else if (bits & WIFI_FAIL_BIT)
-        {
-            ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
-                     WIFI_SSID, WIFI_PASS);
-        }
-        else
-        {
-            ESP_LOGE(TAG, "UNEXPECTED EVENT");
-        }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-}
-*/
 void wifi_start(){
 
     s_wifi_event_group = xEventGroupCreate();
@@ -127,12 +96,8 @@ void wifi_start(){
     ESP_LOGI(TAG, "wifi_init_sta finished.");
 
     //xTaskCreate(&disconnectManual, "Disconecta ", 4096, NULL, 2, NULL);
-    //xTaskCreate(&eventoGrupo,"Trata Grupo",2048,NULL,2,NULL);
    
-
-    //ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler));
-    //ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler));
-    //vEventGroupDelete(s_wifi_event_group);
+   
 }
 
 void wifi_stop();

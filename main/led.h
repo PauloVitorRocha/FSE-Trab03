@@ -9,6 +9,7 @@
 #include <string.h>
 
 void inicializaLed();
-void piscaLed(void *params);
+void Led(void *params);
+void piscaLed();
 
 #endif
