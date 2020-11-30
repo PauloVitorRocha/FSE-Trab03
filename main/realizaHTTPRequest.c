@@ -36,7 +36,7 @@ void parserJsonLatitudeLongitude()
         latitude = cJSON_GetObjectItemCaseSensitive(jsonLocalizacao, "latitude")->valuedouble;
         longitude = cJSON_GetObjectItemCaseSensitive(jsonLocalizacao, "longitude")->valuedouble;
         cJSON_Delete(jsonLocalizacao);
-        printf("%lf %lf\n\n", latitude, longitude);
+        //printf("%lf %lf\n\n", latitude, longitude);
         free(buffer);
         buffer = NULL;
         tamanhoBuffer = 0;
